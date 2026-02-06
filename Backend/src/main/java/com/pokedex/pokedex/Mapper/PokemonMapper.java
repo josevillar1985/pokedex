@@ -1,7 +1,6 @@
 package com.pokedex.pokedex.Mapper;
 
 import org.springframework.stereotype.Component;
-
 import com.pokedex.pokedex.DTO.PokemonDTO;
 import com.pokedex.pokedex.Model.Pokemon;
 
@@ -9,37 +8,40 @@ import com.pokedex.pokedex.Model.Pokemon;
 public class PokemonMapper {
 
     public PokemonDTO pokemonToPokemonDTO(Pokemon pokemon) {
+        if (pokemon == null) {
+            return null;
+        }
 
-    if (pokemon == null) {
-        return null;
+        PokemonDTO dto = new PokemonDTO();
+        // AHORA PASAMOS EL ID AL DTO
+        dto.setId(pokemon.getId());
+
+        dto.setNumero(pokemon.getNumero());
+        dto.setNombre(pokemon.getNombre());
+        dto.setTipo(pokemon.getTipo());
+        dto.setHp(pokemon.getHp());
+        dto.setAtaque(pokemon.getAtaque());
+        dto.setDefensa(pokemon.getDefensa());
+        dto.setImagen(pokemon.getImagen());
+        return dto;
     }
 
-    PokemonDTO dto = new PokemonDTO();
-    dto.setNumero(pokemon.getNumero());
-    dto.setNombre(pokemon.getNombre());
-    dto.setTipo(pokemon.getTipo());
-    dto.setHp(pokemon.getHp());
-    dto.setAtaque(pokemon.getAtaque());
-    dto.setDefensa(pokemon.getDefensa());
-    dto.setImagen(pokemon.getImagen());
-    return dto;
-}
+    public Pokemon pokemonDTOToPokemon(PokemonDTO dto) {
+        if (dto == null) {
+            return null;
+        }
 
-public Pokemon pokemonDTOToPokemon(PokemonDTO dto) {
+        Pokemon pokemon = new Pokemon();
+        // AHORA PASAMOS EL ID A LA ENTIDAD
+        pokemon.setId(dto.getId());
 
-    if (dto == null) {
-        return null;
+        pokemon.setNumero(dto.getNumero());
+        pokemon.setNombre(dto.getNombre());
+        pokemon.setTipo(dto.getTipo());
+        pokemon.setHp(dto.getHp());
+        pokemon.setAtaque(dto.getAtaque());
+        pokemon.setDefensa(dto.getDefensa());
+        pokemon.setImagen(dto.getImagen());
+        return pokemon;
     }
-
-    Pokemon pokemon = new Pokemon();
-    pokemon.setNumero(dto.getNumero());
-    pokemon.setNombre(dto.getNombre());
-    pokemon.setTipo(dto.getTipo());
-    pokemon.setHp(dto.getHp());
-    pokemon.setAtaque(dto.getAtaque());
-    pokemon.setDefensa(dto.getDefensa());
-    pokemon.setImagen(dto.getImagen());
-    return pokemon;
-}
-
 }

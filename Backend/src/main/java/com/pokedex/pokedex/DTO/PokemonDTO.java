@@ -2,6 +2,8 @@ package com.pokedex.pokedex.DTO;
 
 public class PokemonDTO {
 
+    // Añadimos el ID para identificar el registro en actualizaciones
+    private Long id;
     private Integer numero;
     private String nombre;
     private String tipo;
@@ -11,6 +13,15 @@ public class PokemonDTO {
     private String imagen;
 
     public PokemonDTO() {}
+
+    // Getter y Setter para el ID
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Integer getNumero() {
         return numero;

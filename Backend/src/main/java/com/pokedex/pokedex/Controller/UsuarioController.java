@@ -2,10 +2,12 @@ package com.pokedex.pokedex.Controller;
 
 import com.pokedex.pokedex.DTO.UsuarioDTO;
 import com.pokedex.pokedex.Service.UsuarioService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/usuario")
+@CrossOrigin(origins = "*") // Importante si vas a conectar un Frontend (React/Angular)
 public class UsuarioController {
 
     private final UsuarioService service;
@@ -14,16 +16,16 @@ public class UsuarioController {
         this.service = service;
     }
 
-    @PostMapping
-    public UsuarioDTO crearUsuario(@RequestBody UsuarioDTO dto) {
-        return service.crearUsuario(dto);
+    @PostMapping("/registro")
+    public ResponseEntity<UsuarioDTO> crearUsuario(@RequestBody UsuarioDTO dto) {
+        // Usamos ResponseEntity para devolver un código 201 (Created)
+        return ResponseEntity.status(201).body(service.crearUsuario(dto));
     }
 
-    @GetMapping("/{email:.+}")
-    public UsuarioDTO obtenerEmail(@PathVariable String email) {
-        System.out.println("EMAIL RECIBIDO: " + email);
-
-        return service.obtenerEmail(email);
+    @GetMapping("/{email}")
+    public ResponseEntity<UsuarioDTO> obtenerPorEmail(@PathVariable String email) {
+        System.out.println("Buscando usuario con email: " + email);
+        UsuarioDTO usuario = service.obtenerEmail(email);
+        return ResponseEntity.ok(usuario);
     }
-
 }
