@@ -2,59 +2,67 @@
   <div>
     <HeaderComponent />
 
-  <div class="form-pokedex">
-    <form @submit.prevent="enviarFormulario">
-      <h1>Registrar Pokémon</h1>
+    <div class="form-pokedex">
+      <form @submit.prevent="enviarFormulario">
+        <h1>Registrar Pokémon</h1>
 
-      <label>Nombre</label>
-      <input type="text" v-model="pokemon.nombre" placeholder="Ej: Pikachu" />
+        <label>Nombre</label>
+        <input type="text" v-model="pokemon.nombre" placeholder="Ej: Pikachu" />
 
-      <label>Número Pokédex</label>
-      <input type="text" v-model="pokemon.numero" placeholder="Ej: 004" />
+        <label>Número Pokédex</label>
+        <input type="number" v-model.number="pokemon.numero" placeholder="Ej: 25" />
 
-      <label>Tipo</label>
-      <select v-model="pokemon.tipo">
-        <option disabled value="">Selecciona un tipo</option>
-        <option v-for="tipo in tipos" :key="tipo.value" :value="tipo.value">
-          {{ tipo.label }}
-        </option>
-      </select>
+        <label>Tipo</label>
+        <select v-model="pokemon.tipo">
+          <option disabled value="">Selecciona un tipo</option>
+          <option
+            v-for="tipo in tipos"
+            :key="tipo.value"
+            :value="tipo.value"
+          >
+            {{ tipo.label }}
+          </option>
+        </select>
 
-      <label>Ataque</label>
-      <input type="number" v-model="pokemon.ataque" placeholder="Ej: 65" />
+        <label>Ataque</label>
+        <input type="number" v-model.number="pokemon.ataque" placeholder="Ej: 55" />
 
-      <label>Defensa</label>
-      <input type="number" v-model="pokemon.defensa" placeholder="Ej: 80" />
+        <label>Defensa</label>
+        <input type="number" v-model.number="pokemon.defensa" placeholder="Ej: 40" />
 
-      <label>Vida</label>
-      <input type="number" v-model="pokemon.hp" placeholder="Ej: 450" />
+        <label>Vida</label>
+        <input type="number" v-model.number="pokemon.hp" placeholder="Ej: 35" />
 
-      
-      <label>Imagen del Pokémon</label>
-      <div class="file-wrapper">
-        <input type="file" id="imagen" accept="image/*" @change="seleccionarImagen" />
-        <label for="imagen" class="file-label">
-          {{ imagenNombre || 'Seleccionar imagen' }}
-        </label>
-      </div>
+        <label>Imagen del Pokémon</label>
+        <div class="file-wrapper">
+          <input
+            type="file"
+            id="imagen"
+            accept="image/*"
+            @change="seleccionarImagen"
+          />
+          <label for="imagen" class="file-label">
+            {{ imagenNombre || "Seleccionar imagen" }}
+          </label>
+        </div>
 
-      
-      <div v-if="imagenPreview" class="preview">
-        <img :src="imagenPreview" alt="Preview Pokémon" />
-      </div>
+        <div v-if="imagenPreview" class="preview">
+          <img :src="imagenPreview" alt="Preview Pokémon" />
+        </div>
 
-      <button>Guardar Pokémon</button>
-    </form>
+        <button>Guardar Pokémon</button>
+      </form>
+    </div>
   </div>
-
-  </div>
-  
 </template>
 
 <script>
 import HeaderComponent from "./HeaderComponent.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+
+// 🔥 API HTTPS PRODUCCIÓN
+const API_URL = "https://api.josevillar.com/api/pokemon";
 
 export default {
   name: "FormPokemon",
@@ -64,12 +72,12 @@ export default {
   data() {
     return {
       pokemon: {
-        numero: "",
+        numero: null,
         nombre: "",
         tipo: "",
-        ataque: "",
-        defensa: "",
-        hp: ""
+        ataque: null,
+        defensa: null,
+        hp: null
       },
 
       tipos: [
@@ -124,12 +132,14 @@ export default {
         return Swal.fire({
           icon: "error",
           title: "Campos obligatorios",
-          text: "Rellena todos los campos"
+          text: "Rellena todos los campos",
+          background: "#1e1e1e",
+          color: "#ffffff"
         });
       }
 
       axios
-        .post("/api/pokemon", {
+        .post(API_URL, {
           numero: this.pokemon.numero,
           nombre: this.pokemon.nombre,
           tipo: this.pokemon.tipo,
@@ -141,33 +151,39 @@ export default {
         .then(() => {
           Swal.fire({
             icon: "success",
-            title: "¡Pokémon registrado!"
+            title: "¡Pokémon registrado!",
+            background: "#1e1e1e",
+            color: "#ffffff",
+            timer: 1400,
+            showConfirmButton: false
           });
 
           this.pokemon = {
-            numero: "",
+            numero: null,
             nombre: "",
             tipo: "",
-            ataque: "",
-            defensa: "",
-            hp: ""
+            ataque: null,
+            defensa: null,
+            hp: null
           };
           this.imagenPreview = null;
           this.imagenNombre = "";
         })
-        .catch(err => {
-          console.error(err);
+        .catch(error => {
+          console.error("❌ ERROR POST", error);
+
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "No se pudo guardar el Pokémon"
+            text: "No se pudo guardar el Pokémon",
+            background: "#1e1e1e",
+            color: "#ffffff"
           });
         });
     }
   }
 };
 </script>
-
 
 <style scoped>
 .form-pokedex {

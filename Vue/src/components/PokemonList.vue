@@ -5,25 +5,37 @@
     <!-- BUSCADOR -->
     <div class="search-wrapper">
       <div class="search-box">
-        <input type="text" v-model="busqueda" placeholder="Buscar Pokémon..." />
+        <input
+          type="text"
+          v-model="busqueda"
+          placeholder="Buscar Pokémon..."
+        />
       </div>
     </div>
 
     <!-- LISTA -->
     <main class="pokemon-grid">
-      <PokemonCard v-for="pokemon in pokemonsFiltrados" :key="pokemon.id" :pokemon="pokemon" @editar="abrirModal"
-        @borrar="confirmarBorrado" />
+      <PokemonCard
+        v-for="pokemon in pokemonsFiltrados"
+        :key="pokemon.id"
+        :pokemon="pokemon"
+        @editar="abrirModal"
+        @borrar="confirmarBorrado"
+      />
     </main>
 
     <!-- MODAL -->
     <div v-if="mostrarModal" class="modal-overlay">
       <div class="modal">
-        <EditarPoke :pokemon="pokemonSeleccionado" @cerrar="cerrarModal" @actualizado="pokemonActualizado" />
+        <EditarPoke
+          :pokemon="pokemonSeleccionado"
+          @cerrar="cerrarModal"
+          @actualizado="pokemonActualizado"
+        />
       </div>
     </div>
   </div>
 </template>
-
 
 <script>
 import axios from "axios";
@@ -31,6 +43,9 @@ import Swal from "sweetalert2";
 import PokemonCard from "./PokemonCard.vue";
 import EditarPoke from "./EditarPoke.vue";
 import HeaderComponent from "./HeaderComponent.vue";
+
+// 🔥 API HTTPS EN PRODUCCIÓN
+const API_URL = "https://api.josevillar.com/api/pokemon";
 
 export default {
   name: "PokemonList",
@@ -62,8 +77,21 @@ export default {
     }
   },
   methods: {
+    // 🔹 GET
+    cargarPokemons() {
+      axios
+        .get(API_URL)
+        .then(response => {
+          this.pokemons = response.data;
+        })
+        .catch(error => {
+          console.error("❌ Error al cargar Pokémon", error);
+        });
+    },
+
+    // 🔹 MODAL
     abrirModal(pokemon) {
-      this.pokemonSeleccionado = pokemon;
+      this.pokemonSeleccionado = { ...pokemon };
       this.mostrarModal = true;
     },
     cerrarModal() {
@@ -74,16 +102,8 @@ export default {
       this.cerrarModal();
       this.cargarPokemons();
     },
-    cargarPokemons() {
-      axios
-        .get("http://localhost:8082/api/pokemon")
-        .then(response => {
-          this.pokemons = response.data;
-        })
-        .catch(error => {
-          console.log("Error al cargar Pokémon", error);
-        });
-    },
+
+    // 🔹 DELETE CONFIRMACIÓN
     confirmarBorrado(pokemon) {
       Swal.fire({
         title: `¿Borrar a ${pokemon.nombre}?`,
@@ -103,9 +123,11 @@ export default {
         }
       });
     },
+
+    // 🔹 DELETE REAL
     borrarPokemon(pokemon) {
       axios
-        .delete(`http://localhost:8082/api/pokemon/${pokemon.numero}`)
+        .delete(`${API_URL}/${pokemon.id}`)
         .then(() => {
           Swal.fire({
             icon: "success",
@@ -193,7 +215,6 @@ export default {
   padding: 18px;
   border-radius: 12px;
   width: 300px;
-  /* pequeño */
   max-width: 90%;
   color: #fff;
 }
